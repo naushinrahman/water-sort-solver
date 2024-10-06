@@ -4,7 +4,7 @@
 
 num_of_bottles = 5
 
-# start with
+# ex
 
 # blue   yellow   blue   empty   empty
 # blue   yellow    red   empty   empty
@@ -15,14 +15,15 @@ num_of_bottles = 5
 
 class Bottle:
     def __init__(self, size):
-        #idk if i need this yet
         self.top = -1
         self.size = size
         self.items = [None] * self.size
+        self.used = 0
     
     def push(self, colour):
         self.top+=1
         self.items[self.top] = colour
+        self.used+=1
     
     def pop(self, colour):
         pass
@@ -30,11 +31,15 @@ class Bottle:
     def isEmpty(self):
         pass
     
+    def isFull(self):
+        pass
+    
     def inStack(self):
         pass
     
     def pour(self):
         pass
+    
     #might also want an is sorted function 
     
 
