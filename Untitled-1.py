@@ -17,7 +17,7 @@ class Bottle:
     def __init__(self, size):
         self.top = -1
         self.size = size
-        self.items = [None] * self.size
+        self.items = []
         self.used = 0
     
     def push(self, colour):
@@ -25,23 +25,43 @@ class Bottle:
         self.items[self.top] = colour
         self.used+=1
     
-    def pop(self, colour):
-        pass
+    def pop(self):
+        if self.isEmpty() is False:
+            self.top-=1
+            self.used-=1
     
     def isEmpty(self):
-        pass
+        return True if self.used == 0 and self.top == -1 else False
     
     def isFull(self):
-        pass
+        return True if self.used == self.size and self.used > 0 else False
     
-    def inStack(self):
-        pass
+    def inStack(self, colour):
+        instances_of_colour = []
+        for item in self.items:
+            if item.lower() == colour.lower():
+                index = self.items.index(colour)
+                instances_of_colour.append(index)
+
+        return False if len(instances_of_colour) > 0 else instances_of_colour
+                
     
     def pour(self):
         pass
     
-    #might also want an is sorted function 
+    def search(self, colour):
+        pass
     
+    def isSorted(self):
+        top = self.items[self.top]
+        flag = True
+        for item in self.items:
+            if item.lower() != top.lower():
+                flag = False
+        
+        return True if flag == True else False
+            
+    
+def user_input():
+    pass
 
-    
-    
