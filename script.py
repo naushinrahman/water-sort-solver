@@ -2,6 +2,8 @@
 # does some stuff
 # output: steps to take to sort in most efficient way similar to chess moves?
 
+import sys
+
 num_of_bottles = 5
 
 # ex
@@ -13,10 +15,10 @@ num_of_bottles = 5
 # the bottles are an array of stacks
 
 class Bottle:
-    def __init__(self, size):
+    def __init__(self):
         self.top = -1
-        self.size = size
-        self.items = []
+        self.size = 4
+        self.items = [None] * self.size
         self.used = 0
     
     def push(self, colour):
@@ -35,7 +37,11 @@ class Bottle:
     
     def isFull(self):
         return True if self.used == self.size and self.used > 0 else False
-
+    
+    def print(self):
+        for item in self.items:
+            print(item)
+      
 
     def search(self, colour):
         instances_of_colour = []
@@ -71,21 +77,41 @@ class Bottle:
             
 
 def pour(initial_bottle, final_bottle):
-    '''
-    need to search in initial bottle
-    	#if false return error message
-    else count length of array returned
-    then check emptySpaces of final bottle
-		#if there are no empty spaces in final bottle return error message
-	if there are empty spaces check top of both bottles
-		#if tops match: 
-			count how much of the same colour
-   			increment final.used in a loop until either 
     
-    '''
-    pass
-	
+    if initial_bottle.isEmpty():            #check if initial bottle is empty
+        print('Nothing in initial bottle')
+        return
+	    
+    top_colour = initial_bottle.top.lower()  #check top colour
+    print(top_colour)
+    
+'''
+need to search in initial bottle
+	#if false return error message
+else count length of array returned
+then check emptySpaces of final bottle in a var
+	#if there are no empty spaces in final bottle return error message
+if there are empty spaces check top of both bottles
+	#if tops match: 
+		count how much of the same colour in initial bottle in a var
+		while emptySpaces > 0: final.used+=1, initial.used-=1, emptySpaces-=1 
+
+'''
 
 
 def user_input():
-    pass
+    # while num_of_bottles > 0:
+	#     print('you have ',num_of_bottles, ' bottles you need to fill')
+	counter = 1
+	temp = Bottle()
+
+	while counter <= 4:
+		print('Enter colour number ', counter)
+		colour = input(' : ')
+		temp.push(colour)
+		counter+=1
+
+	temp.print()
+
+
+user_input()
