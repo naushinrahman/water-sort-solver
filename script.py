@@ -4,13 +4,8 @@
 
 import sys
 
-num_of_bottles = 5
-
-# ex
-# blue   yellow   blue   empty   empty
-# blue   yellow    red   empty   empty
-# yellow  red     red    empty   empty
-# yellow  blue    red    empty   empty
+num_of_bottles = 2
+array_of_bottles = [None] * num_of_bottles
 
 # the bottles are an array of stacks
 
@@ -100,18 +95,40 @@ if there are empty spaces check top of both bottles
 
 
 def user_input():
-    # while num_of_bottles > 0:
-	#     print('you have ',num_of_bottles, ' bottles you need to fill')
-	counter = 1
-	temp = Bottle()
+	global array_of_bottles
+	count_of_bottles = num_of_bottles
+	current_index = 0
 
-	while counter <= 4:
-		print('Enter colour number ', counter)
-		colour = input(' : ')
-		temp.push(colour)
-		counter+=1
+	while count_of_bottles > 0:
+		print('you have', count_of_bottles, 'bottles you need to fill')
+		
+		counter = 1
+		temp = Bottle()
 
-	temp.print()
+		while counter <= 4:
+			print('Enter colour number ', counter)
+			colour = input(' : ')
+			temp.push(colour)
+			counter+=1
+
+		#temp.print()
+
+		array_of_bottles[current_index] = temp
+
+		current_index+=1
+		count_of_bottles-=1
+
+	for item in array_of_bottles:
+		item.print()
+		print('\n')
+	#print(array_of_bottles)
+
+
+# ex
+# blue   yellow   blue   empty   empty
+# blue   yellow    red   empty   empty
+# yellow  red     red    empty   empty
+# yellow  blue    red    empty   empty
 
 
 user_input()
