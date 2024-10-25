@@ -1,8 +1,4 @@
-# input: number of bottles first then loop through the bottles and add colour of each layer or empty
-# does some stuff
 # output: steps to take to sort in most efficient way similar to chess moves?
-
-import sys
 
 num_of_bottles = 2
 array_of_bottles = [None] * num_of_bottles
@@ -15,16 +11,25 @@ class Bottle:
         self.size = 4
         self.items = [None] * self.size
         self.used = 0
+        self.top_colour = None
     
     def push(self, colour):
+        if self.isFull():
+            print("Cannot add: Bottle is full")
+            return
         self.top+=1
         self.items[self.top] = colour
         self.used+=1
+        self.top_colour = colour
     
     def pop(self):
-        if self.isEmpty() is False:
-            self.top-=1
-            self.used-=1
+        if self.isEmpty():
+            print("Cannot remove: Bottle is empty")
+            return
+        self.top_colour = None
+        self.top-=1
+        self.used-=1
+        self.top_colour = self.items[self.top] if self.top >= 0 else None
 
 
     def isEmpty(self):
@@ -34,18 +39,19 @@ class Bottle:
         return True if self.used == self.size and self.used > 0 else False
     
     def print(self):
-        for item in self.items:
-            print(item)
-      
+        for i in range(self.top, -1, -1):
+            print(self.items[i])
+    #     for item in self.items:
+    #         print(item)
+    
 
     def search(self, colour):
         instances_of_colour = []
         for item in self.items:
-            if item.lower() == colour.lower():  #want to be case insensitive 
-                index = self.items.index(colour)
-                instances_of_colour.append(index)
-
-        return False if len(instances_of_colour) > 0 else instances_of_colour
+            if item == colour:  #want to be case insensitive 
+                instances_of_colour.append(colour)
+        return False if len(instances_of_colour) <= 0 else instances_of_colour
+    
     
     def isSorted(self):
         top = self.items[self.top]
@@ -53,8 +59,8 @@ class Bottle:
         for item in self.items:
             if item.lower() != top.lower():
                 flag = False
-        
         return True if flag == True else False
+    
     
     def emptySpaces(self):
         counter = 0
@@ -67,18 +73,23 @@ class Bottle:
             counter = 4
         if self.isFull() == True:
             counter = 0
-        
         return counter    #feel like im missing something here
             
 
 def pour(initial_bottle, final_bottle):
     
     if initial_bottle.isEmpty():            #check if initial bottle is empty
-        print('Nothing in initial bottle')
+        print('Nothing in initial bottle, cannot pour')
         return
 	    
-    top_colour = initial_bottle.top.lower()  #check top colour
-    print(top_colour)
+    top_colour = initial_bottle.top_colour  
+    num_colour = len(initial_bottle.search(top_colour))
+    
+    num_of_spaces = len(final_bottle.search('empty'))
+    if num_of_spaces < 1:
+        print('Bottle full, cannot pour')
+        return
+    
     
 '''
 need to search in initial bottle
@@ -93,8 +104,10 @@ if there are empty spaces check top of both bottles
 
 '''
 
+def sort():
+    pass
 
-def user_input():
+def user_input():                      #add documentation for this function
 	global array_of_bottles
 	count_of_bottles = num_of_bottles
 	current_index = 0
@@ -106,22 +119,15 @@ def user_input():
 		temp = Bottle()
 
 		while counter <= 4:
-			print('Enter colour number ', counter)
-			colour = input(' : ')
+			print('Enter colour number ', counter, '(from bottom to top)')
+			colour = input(' : ')  #need to check: emptySpaces can only have other emptySpaces on top
 			temp.push(colour)
 			counter+=1
-
-		#temp.print()
 
 		array_of_bottles[current_index] = temp
 
 		current_index+=1
 		count_of_bottles-=1
-
-	for item in array_of_bottles:
-		item.print()
-		print('\n')
-	#print(array_of_bottles)
 
 
 # ex
@@ -132,3 +138,10 @@ def user_input():
 
 
 user_input()
+
+# for item in array_of_bottles:  #works
+# 		item.print()
+# 		print('\n')
+
+
+pour(array_of_bottles[0], array_of_bottles[1])
