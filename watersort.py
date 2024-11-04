@@ -1,5 +1,3 @@
-# output: steps to take to sort in most efficient way similar to chess moves?
-
 num_of_bottles = 2
 array_of_bottles = [None] * num_of_bottles
 
@@ -17,11 +15,12 @@ class Bottle:
         if self.is_full():
             print("Cannot add: Bottle is full")
             return
-        if colour != 'empty':      #when it is a colour
-            self.top_colour = colour
-            self.used+=1
-            self.top+=1
-            self.items[self.top] = colour
+        if colour == 'empty':
+            colour = None     
+        self.top_colour = colour
+        self.used+=1
+        self.top+=1
+        self.items[self.top] = colour
     
     def pop(self):
         if self.is_empty():
@@ -39,7 +38,7 @@ class Bottle:
     def is_full(self):
         return True if self.used == self.size and self.used > 0 else False
     
-    def print(self):
+    def print_items(self):
         for i in range((self.size-1), -1, -1):
             print(self.items[i])
 
@@ -163,23 +162,21 @@ def user_input():
 # yellow  red     red    empty   empty
 # yellow  blue    red    empty   empty
 
-user_input()
-
-for item in array_of_bottles:  
-		print('\n')
-		item.print()
-		print('top colour: ', item.top_colour)
-		print('index:', item.top)
-		print('used:', item.used)
-
-
-pour(array_of_bottles[0], array_of_bottles[1])
-
-print('after pour:')
-
-for item in array_of_bottles:  
-		print('\n')
-		item.print()
-		print('top colour: ', item.top_colour)		
-		print('index:', item.top)
-		print('used:', item.used)
+if __name__ == "__main__":
+    user_input()
+    for item in array_of_bottles:  
+        print('\n')
+        item.print_items()
+        print('top colour: ', item.top_colour)
+        print('index:', item.top)
+        print('used:', item.used)
+    
+    pour(array_of_bottles[0], array_of_bottles[1])
+    
+    print('after pour:')
+    for item in array_of_bottles:  
+        print('\n')
+        item.print_items()
+        print('top colour: ', item.top_colour)
+        print('index:', item.top)
+        print('used:', item.used)
