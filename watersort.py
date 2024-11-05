@@ -39,54 +39,40 @@ class Bottle:
         return True if self.used == self.size and self.used > 0 else False
     
     def print_items(self):
-        for i in range((self.size-1), -1, -1):
+        for i in range((self.size-1), -1, -1):  #display all items from top of Bottle to bottom
             print(self.items[i])
 
-    def search(self, colour):       #returns array of top colour/emptyspaces
-        instances_of_colour = []
+    def search(self, colour):       #returns array of top colour
+        if self.return_top_colour() != colour:
+            return False
         
-        for i in range((self.used-1), -1, -1):
-            if self.items[i] == colour:
-                instances_of_colour.append(colour)
+        instances_of_colour = 0
+        
+        for i in range((self.used-1), -1, -1):    #starting from the top of the Bottle
+            if self.items[i] == colour:           #if the top item and contiguous items match colour argument
+                instances_of_colour+=1            #increment counter
             else:               
-                break
-        return False if len(instances_of_colour) <= 0 else instances_of_colour
+                break      #the first non matching item causes a break
+        return instances_of_colour  
     
-    def search_empty(self, colour):       #returns array of top colour/emptyspaces
-        instances_of_colour = []
+    def search_empty(self):       #returns array of emptyspaces at top of Bottle
+        array_of_empty = 0
         
         for i in range((self.size-1), -1, -1):
-            if self.items[i] == colour:
-                instances_of_colour.append(colour)
+            if self.items[i] == None:
+                array_of_empty+=1
             else:               
                 break
-        return False if len(instances_of_colour) <= 0 else instances_of_colour
-    
-    def return_top_colour(self):
-        return self.top_colour
+        return array_of_empty
     
     def is_sorted(self):
-        top = self.items[self.top]
         flag = True
         for item in self.items:
-            if item.lower() != top.lower():
+            if item != self.top_colour:
                 flag = False
-        return True if flag == True else False
-    
-    
-    def empty_spaces(self):
-        counter = 0
-           
-        for item in self.items:
-            if item == 'e':
-                counter+=1   
-                     
-        if self.is_empty() == True:    #should i check isEmpty or isFull here or in pour f'n?
-            counter = 4
-        if self.is_full() == True:
-            counter = 0
-        return counter    #feel like im missing something here
+        return flag
             
+
 
 def pour(initial_bottle, final_bottle):
     
@@ -94,29 +80,28 @@ def pour(initial_bottle, final_bottle):
         print('Error: Nothing in initial bottle, cannot pour')
         return
     
-    if final_bottle.is_full():            
+    if final_bottle.is_full():            #check if final bottle is full
         print('Error: Bottle full, cannot pour')
         return
     
-    top_colour = initial_bottle.return_top_colour()
-    num_colour = len(initial_bottle.search(top_colour))
+    top_colour = initial_bottle.top_colour          #find top colour
+    num_colour = initial_bottle.search(top_colour)  #find how many layers of top colour are contiguous
     
-    if final_bottle.is_empty() is False:
-        matching_top = final_bottle.return_top_colour()
-        if matching_top != top_colour:
+    if final_bottle.is_empty() is False:            #if final bottle has some liquid 
+        if top_colour != final_bottle.top_colour:   #if top colours of each bottle dont match
             print('Error: cannot pour on to a different colour')
             return
     
-    num_of_spaces = len(final_bottle.search_empty(None))
+    num_of_spaces = final_bottle.search_empty()   #find how many empty spaces are in the final bottle
     
     try:
-        while num_of_spaces > 0 and num_colour > 0:
-            final_bottle.push(top_colour)
-            initial_bottle.pop()
-            num_colour-=1
+        while num_of_spaces > 0 and num_colour > 0:  #if there is still liquid to pour and space in the final bottle
+            final_bottle.push(top_colour)            #pour 1 layer of liquid into final bottle
             num_of_spaces-=1
+            initial_bottle.pop()                     #delete that layer of liquid from inital bottle
+            num_colour-=1
     except:
-        print("Error: pour unsuccessful")
+        print("Error: pour unsuccessful")          #if any issues pouring print error message
     
 
 def sort():
