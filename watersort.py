@@ -43,7 +43,7 @@ class Bottle:
             print(self.items[i])
 
     def search(self, colour):       #returns array of top colour
-        if self.return_top_colour() != colour:
+        if self.top_colour != colour:
             return False
         
         instances_of_colour = 0
@@ -72,6 +72,28 @@ class Bottle:
                 flag = False
         return flag
             
+class MoveTracker:
+    def __init__(self):
+        self.moves = []  # To store all moves as tuples (source_bottle, target_bottle)
+
+    def record_move(self, source, target):
+        self.moves.append((source, target))
+
+    def get_moves(self):
+        return self.moves
+
+    def undo_last_move(self, array_of_bottles):
+        if not self.moves:
+            print("No moves to undo.")
+            return
+
+        source, target = self.moves.pop()
+
+        top_colour = array_of_bottles[target].return_top_colour()
+        array_of_bottles[target].pop()
+        array_of_bottles[source].push(top_colour)
+
+        print(f"Undo: Pour from Bottle {target + 1} back to Bottle {source + 1}")
 
 
 def pour(initial_bottle, final_bottle):
@@ -105,11 +127,40 @@ def pour(initial_bottle, final_bottle):
     
 
 def sort():
-    pass
+    moves = []
+    sorted_bottles = [bottle.is_sorted() for bottle in array_of_bottles]
+
+    while not all(sorted_bottles):
+        move_found = False
+        for i, bottle in enumerate(array_of_bottles):
+            if bottle.is_empty() or bottle.is_sorted():
+                continue
+            top_colour = bottle.return_top_colour()
+            num_colour = len(bottle.search(top_colour))
+
+            for j, target_bottle in enumerate(array_of_bottles):
+                if i == j or target_bottle.is_full():
+                    continue
+                if target_bottle.is_empty() or target_bottle.return_top_colour() == top_colour:
+                    pour(bottle, target_bottle)
+                    moves.append(f"Pour from Bottle {i + 1} to Bottle {j + 1}")
+                    move_found = True
+                    break
+            if move_found:
+                break
+
+        sorted_bottles = [bottle.is_sorted() for bottle in array_of_bottles]
+         
+        if not move_found:
+            print("No more moves found. Sorting may not be possible.")
+            break
+
+    return moves
+
 
 def user_input():                    
-	global array_of_bottles
-	count_of_bottles = num_of_bottles
+	global array_of_bottles  #ask user how many bottles
+	count_of_bottles = num_of_bottles  #want button for empty bottles
 	current_index = 0
 
 	while count_of_bottles > 0:
@@ -141,14 +192,10 @@ def user_input():
 			current_index+=1
 			count_of_bottles-=1
 
-# ex
-# blue   yellow   blue   empty   empty
-# blue   yellow    red   empty   empty
-# yellow  red     red    empty   empty
-# yellow  blue    red    empty   empty
 
 if __name__ == "__main__":
     user_input()
+    
     for item in array_of_bottles:  
         print('\n')
         item.print_items()
