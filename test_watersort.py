@@ -1,5 +1,5 @@
 import unittest
-from watersort import Bottle, pour
+from watersort import Bottle, pour, MoveTracker, sort
 
 class TestBottleArray(unittest.TestCase):
     
@@ -11,8 +11,7 @@ class TestBottleArray(unittest.TestCase):
         """Test that newly created bottles are empty."""
         for bottle in self.bottles:
             self.assertTrue(bottle.is_empty())
-    
-    
+
                 
     def test_push(self):
         self.assertTrue(self.bottles[0].is_empty())
@@ -104,8 +103,71 @@ class TestBottleArray(unittest.TestCase):
         self.assertEqual(self.bottles[1].is_sorted(), True)
         self.assertEqual(self.bottles[2].is_sorted(), True)
         self.assertEqual(self.bottles[3].is_sorted(), True)
-        
-        
-        
+
+
+def setup_test_bottles():
+    global array_of_bottles
+    bottle1 = Bottle()
+    bottle1.push('red')
+    bottle1.push('blue')
+    bottle1.push('blue')
+    bottle1.push('red')
+
+    bottle2 = Bottle()
+    bottle2.push('blue')
+    bottle2.push('red')
+    bottle2.push('red')
+    bottle2.push('blue')
+
+    empty_bottle = Bottle()
+
+    array_of_bottles = [bottle1, bottle2, empty_bottle]
+
+
+def test_sort():
+    print("Initial state of bottles:")
+    for idx, bottle in enumerate(array_of_bottles):
+        print(f"Bottle {idx + 1}:")
+        bottle.print_items()
+
+    print("\nSorting the bottles...\n")
+    moves = sort()
+
+    print("Moves made during sorting:")
+    for move in moves:
+        print(move)
+
+    print("\nFinal state of bottles:")
+    for idx, bottle in enumerate(array_of_bottles):
+        print(f"Bottle {idx + 1}:")
+        bottle.print_items()
+
+    all_sorted = all(bottle.is_sorted() or bottle.is_empty() for bottle in array_of_bottles)
+    print("\nAre all bottles sorted?", "Yes" if all_sorted else "No")
+
+
+
+def test_move_tracker():
+    tracker = MoveTracker()
+
+    print("\nTesting MoveTracker:")
+    tracker.record_move(0, 2)
+    tracker.record_move(1, 2)
+    print("Moves recorded:")
+    print(tracker.get_moves())
+
+    print("\nUndoing last move...")
+    tracker.undo_last_move(array_of_bottles)
+    print("Moves after undo:")
+    print(tracker.get_moves())
+
+    print("\nCurrent state of bottles after undo:")
+    for idx, bottle in enumerate(array_of_bottles):
+        print(f"Bottle {idx + 1}:")
+        bottle.print_items()
+
+
 if __name__ == "__main__":
-    unittest.main()
+    setup_test_bottles()  
+    test_sort()           
+    #test_move_tracker()   

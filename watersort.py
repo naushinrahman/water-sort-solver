@@ -1,7 +1,3 @@
-num_of_bottles = 2
-array_of_bottles = [None] * num_of_bottles
-
-# the bottles are an array of stacks
 
 class Bottle:
     def __init__(self):
@@ -89,7 +85,7 @@ class MoveTracker:
 
         source, target = self.moves.pop()
 
-        top_colour = array_of_bottles[target].return_top_colour()
+        top_colour = array_of_bottles[target].top_colour
         array_of_bottles[target].pop()
         array_of_bottles[source].push(top_colour)
 
@@ -128,20 +124,35 @@ def pour(initial_bottle, final_bottle):
 
 def sort():
     moves = []
-    sorted_bottles = [bottle.is_sorted() for bottle in array_of_bottles]
-
+    visited_states = set()
+    sorted_bottles = [bottle.is_sorted() if bottle else True for bottle in array_of_bottles]
+    MAX_MOVES_PER_PAIR = 5  # Limit moves between specific pairs
+    move_count = {}
+    
+    def encode_state(bottles):
+        return tuple(tuple(bottle.items) if bottle else None for bottle in bottles)
+    
     while not all(sorted_bottles):
         move_found = False
+        
+        state = encode_state(array_of_bottles)
+
+        if state in visited_states:
+            print("State already visited. Skipping further exploration.")
+            break
+
+        visited_states.add(state)
+        
         for i, bottle in enumerate(array_of_bottles):
+            print(f"Bottle {i + 1}: {bottle.items}")
             if bottle.is_empty() or bottle.is_sorted():
                 continue
-            top_colour = bottle.return_top_colour()
-            num_colour = len(bottle.search(top_colour))
+            top_colour = bottle.top_colour
 
             for j, target_bottle in enumerate(array_of_bottles):
                 if i == j or target_bottle.is_full():
                     continue
-                if target_bottle.is_empty() or target_bottle.return_top_colour() == top_colour:
+                if target_bottle.is_empty() or target_bottle.top_colour == top_colour:
                     pour(bottle, target_bottle)
                     moves.append(f"Pour from Bottle {i + 1} to Bottle {j + 1}")
                     move_found = True
@@ -193,22 +204,42 @@ def user_input():
 			count_of_bottles-=1
 
 
-if __name__ == "__main__":
-    user_input()
+
+num_of_bottles = 3
+array_of_bottles =  [Bottle() for _ in range(num_of_bottles)]
+
+array_of_bottles[0].push("red")
+array_of_bottles[0].push("blue")
+array_of_bottles[1].push("blue")
+array_of_bottles[1].push("red")
+
+for idx, bottle in enumerate(array_of_bottles):
+    print(f"Bottle {idx + 1}: {bottle.items}\n")
+
+moves = sort()
+print("Moves:", moves)
+
+for idx, bottle in enumerate(array_of_bottles):
+    print(f"Bottle {idx + 1}: {bottle.items}")
+
+
+# if __name__ == "__main__":
+#     user_input()
     
-    for item in array_of_bottles:  
-        print('\n')
-        item.print_items()
-        print('top colour: ', item.top_colour)
-        print('index:', item.top)
-        print('used:', item.used)
+#     for item in array_of_bottles:  
+#         print('\n')
+#         item.print_items()
+#         print('top colour: ', item.top_colour)
+#         print('index:', item.top)
+#         print('used:', item.used)
     
-    pour(array_of_bottles[0], array_of_bottles[1])
+#     pour(array_of_bottles[0], array_of_bottles[1])
     
-    print('after pour:')
-    for item in array_of_bottles:  
-        print('\n')
-        item.print_items()
-        print('top colour: ', item.top_colour)
-        print('index:', item.top)
-        print('used:', item.used)
+#     print('after pour:')
+#     for item in array_of_bottles:  
+#         print('\n')
+#         item.print_items()
+#         print('top colour: ', item.top_colour)
+#         print('index:', item.top)
+#         print('used:', item.used)
+
