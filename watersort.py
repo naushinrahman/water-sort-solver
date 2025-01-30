@@ -67,29 +67,15 @@ class Bottle:
             if item != self.top_colour:
                 flag = False
         return flag
+   
             
-class MoveTracker:
-    def __init__(self):
-        self.moves = []  # To store all moves as tuples (source_bottle, target_bottle)
-
-    def record_move(self, source, target):
-        self.moves.append((source, target))
-
-    def get_moves(self):
-        return self.moves
-
-    def undo_last_move(self, array_of_bottles):
-        if not self.moves:
-            print("No moves to undo.")
-            return
-
-        source, target = self.moves.pop()
-
-        top_colour = array_of_bottles[target].top_colour
-        array_of_bottles[target].pop()
-        array_of_bottles[source].push(top_colour)
-
-        print(f"Undo: Pour from Bottle {target + 1} back to Bottle {source + 1}")
+def count_color_blocks(bottles):
+    c = 0
+    for bottle in bottles:
+        for item in bottle.items:
+            if item is not None:  # Count non-empty items
+                c += 1
+    return c
 
 
 def pour(initial_bottle, final_bottle):
@@ -122,52 +108,20 @@ def pour(initial_bottle, final_bottle):
         print("Error: pour unsuccessful")          #if any issues pouring print error message
     
 
-def sort():
-    moves = []
-    visited_states = set()
-    sorted_bottles = [bottle.is_sorted() if bottle else True for bottle in array_of_bottles]
-    MAX_MOVES_PER_PAIR = 5  # Limit moves between specific pairs
-    move_count = {}
+def find_solution():
+    y = 0
+    solution_found = False
     
-    def encode_state(bottles):
-        return tuple(tuple(bottle.items) if bottle else None for bottle in bottles)
+    states = []
+    b = num_of_bottles - 2
+    c = count_color_blocks(array_of_bottles)
     
-    while not all(sorted_bottles):
-        move_found = False
-        
-        state = encode_state(array_of_bottles)
-
-        if state in visited_states:
-            print("State already visited. Skipping further exploration.")
-            break
-
-        visited_states.add(state)
-        
-        for i, bottle in enumerate(array_of_bottles):
-            print(f"Bottle {i + 1}: {bottle.items}")
-            if bottle.is_empty() or bottle.is_sorted():
-                continue
-            top_colour = bottle.top_colour
-
-            for j, target_bottle in enumerate(array_of_bottles):
-                if i == j or target_bottle.is_full():
-                    continue
-                if target_bottle.is_empty() or target_bottle.top_colour == top_colour:
-                    pour(bottle, target_bottle)
-                    moves.append(f"Pour from Bottle {i + 1} to Bottle {j + 1}")
-                    move_found = True
-                    break
-            if move_found:
-                break
-
-        sorted_bottles = [bottle.is_sorted() for bottle in array_of_bottles]
-         
-        if not move_found:
-            print("No more moves found. Sorting may not be possible.")
-            break
-
-    return moves
-
+    for i in range(B - C + 1):
+        column = []  # Create a new column for y + 1
+        for x in range(B - C + 1):
+            column.append([])  # Initialize each cell as an empty list
+            states.append(column) 
+    
 
 def user_input():                    
 	global array_of_bottles  #ask user how many bottles
@@ -205,22 +159,33 @@ def user_input():
 
 
 
-num_of_bottles = 3
+num_of_bottles = 5
 array_of_bottles =  [Bottle() for _ in range(num_of_bottles)]
 
 array_of_bottles[0].push("red")
-array_of_bottles[0].push("blue")
+array_of_bottles[0].push("yellow")
+array_of_bottles[0].push("red")
+array_of_bottles[0].push("yellow")
+
 array_of_bottles[1].push("blue")
 array_of_bottles[1].push("red")
+array_of_bottles[1].push("yellow")
+array_of_bottles[1].push("blue")
 
-for idx, bottle in enumerate(array_of_bottles):
-    print(f"Bottle {idx + 1}: {bottle.items}\n")
+array_of_bottles[2].push("red")
+array_of_bottles[2].push("yellow")
+array_of_bottles[2].push("blue")
+array_of_bottles[2].push("blue")
 
-moves = sort()
-print("Moves:", moves)
+array_of_bottles[3] = Bottle()
+array_of_bottles[4] = Bottle()
+
 
 for idx, bottle in enumerate(array_of_bottles):
     print(f"Bottle {idx + 1}: {bottle.items}")
+
+moves = sort()
+#print("Moves:", moves)
 
 
 # if __name__ == "__main__":
